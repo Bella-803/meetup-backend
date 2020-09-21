@@ -26,7 +26,7 @@ public class EmailController {
 		String[] emailIds = {"bellamandy45@gmail.com", "abstudies803@gmail.com"};
 		String message = "Hello From meetup\n\n Welcome To My System";
 		String subject = "Testing Send Email to Many";
-		String msg = emailService.sendEmailToMany(message, subject, emailIds);
-		return new ResponseEntity<String>(msg, HttpStatus.OK);
+		//String msg = emailService.sendEmailToMany(message, subject, emailIds);
+		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 }

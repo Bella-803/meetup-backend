@@ -24,6 +24,7 @@ public class District {
 	@Column(unique = true)
 	private String name;
 	
+	
 	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, 
 			              CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name = "province_id")

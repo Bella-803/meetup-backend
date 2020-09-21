@@ -118,6 +118,7 @@ public class MeetupService {
 			Meetup existingMeetup = findMeetupById(meetup.getId());
 			if(existingMeetup.getMeetupGroup().getId() == groupId) {
 				meetup.setMeetupGroup(existingMeetup.getMeetupGroup());
+				meetup.setAttendees(existingMeetup.getAttendees());
 				meetupDao.save(meetup);
 				return meetup;
 			}else {
@@ -143,7 +144,6 @@ public class MeetupService {
 		attendees.remove(user);
 		meetup.setAttendees(attendees);
 		meetupDao.save(meetup);
-		System.out.println(meetup.getNumberOfAttendees());
 		return "You have successfully cancelled your attendance";
 	}
 	

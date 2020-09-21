@@ -67,6 +67,13 @@ public class GroupController {
 		return new ResponseEntity<MeetupGroup>(group, HttpStatus.OK);
 	}
 	
+	@GetMapping("/groupAdmin/{groupId}")
+	public ResponseEntity<?> getGroupByGroupAdmin(@PathVariable int groupId, Principal principal){
+		
+		MeetupGroup group = groupService.findGroupById(groupId, principal.getName());	
+		return new ResponseEntity<MeetupGroup>(group, HttpStatus.OK);
+	}
+	
 	
 	@GetMapping("/all/{categoryId}")
 	public List<MeetupGroup> getAllGroups(@PathVariable int categoryId){
@@ -143,6 +150,14 @@ public class GroupController {
 		return ResponseEntity.ok()
 				.contentType(MediaType.IMAGE_JPEG)
 				.body(bytes);
+	}
+	
+	@PatchMapping("/remove/{groupId}/{userId}")
+	public ResponseEntity<String> removeMember(@PathVariable int groupId, @PathVariable int userId, Principal principal){
+		
+		String msg = groupService.removerMember(groupId, userId, principal.getName());
+		
+		return new ResponseEntity<String>(msg, HttpStatus.OK);
 	}
 	
 }

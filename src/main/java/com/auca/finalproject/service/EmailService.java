@@ -45,15 +45,29 @@ public class EmailService {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message);
-			String link = "http://localhost:8080/api/categories/image/1_categoryPic.jpg";
-			String img = "<img src=\""+link+"\" width=\"100\" height=\"100\" />";
 			
-			String emailBody = img + "<h3>Hello, "+user.getFullname()+".</h3>"
-			        + "<p>This is to let you know that "
-			        + "there is a new meetup scheduled on : <strong>"+meetup.getDateAndTime()+"</strong>"
-			        + " <p>in your group <strong>"+groupName+"</strong> </p>"
-			        + "<p>Please <a href=\"http://localhost:3000/login\">click here</a>"
-			        + " to let us know if your are attending</p>";
+			System.out.println(meetup.getDateAndTime());
+			
+			String emailBody = "<div style=\"background-color: lightgray; color: black; width:40rem; margin: 0 auto; height: 30vh;\">\r\n" + 
+				          "<h5 style=\"font-size: 1.83em; text-align: center; padding-top: 5px; margin-bottom: 2px; \">Meetup System</h5>\r\n" + 
+					      "<p style=\"font-family: 'Times New Roman', Times, serif; font-size: 1.2em;\">Hello, "+user.getFullname()+"</p>\r\n" + 
+					      "<p style=\"font-size: 1.2em; font-family: 'Times New Roman', Times, serif;\">This is to let you know that there is a new meetup scheduled on : <strong>"+meetup.getDateAndTime()+"</strong>\r\n" + 
+					      "<br />in your group <strong>"+groupName+"</strong>.<br/> Please click the button below to confirm your attendance.\r\n" + 
+					      "</p>\r\n" + 
+					      "<a href=\"http://localhost:3000/login\" style=\"text-decoration: none; font-size: 1.2em; background-color: darkgreen; color: white; margin: 5px; padding: 1.5% 2%;\">Confirm</a>\r\n" + 
+					      "</div>";
+			
+			
+//			String emailBody =""
+//					+ "<div style='width: 20rem; background-color: light-gray'>"
+//					+ "<h5 style='font-size: 1.83em; margin-top: -9px;'>Meetup System</h5>"
+//					+ "<h3 style='font-size: 20px;'>Hello, "+user.getFullname()+".</h3>"
+//			        + "<p>This is to let you know that "
+//			        + "there is a new meetup scheduled on : <strong>"+meetup.getDateAndTime()+"</strong>"
+//			        + " <p>in your group <strong>"+groupName+"</strong> </p>"
+//			        + "<p>Please <a href=\"http://localhost:3000/login\" style=\"text-decoration: none; font-size: 20; color: blue \">click here</a>"
+//			        + " to let us know if your are attending</p>"
+//			        + "</div>";
 					
 			helper.setTo(user.getEmail());
 			helper.setSubject("New Meetup Scheduled");
@@ -70,25 +84,25 @@ public class EmailService {
 	}
 	
 	
-public String sendEmailToMany(String emailBody, String subject, String[] ccEmail) throws Exception {
-		
-		try {
-			SimpleMailMessage message = new SimpleMailMessage();
-			int i = 0;
-			for(i=0; i<ccEmail.length; i++) {
-				
-				message.setTo(ccEmail[i]);
-				message.setSubject(subject);
-				message.setText(emailBody);
-				mailSender.send(message);
-			}
-			
-			
-			return "email sent successfully";
-			
-		} catch (Exception e) {
-			throw new RuntimeException("Could not send email : "+e.getMessage());
-		}
-		
-	}
+//public String sendEmailToMany(String emailBody, String subject, String[] ccEmail) throws Exception {
+//		
+//		try {
+//			SimpleMailMessage message = new SimpleMailMessage();
+//			int i = 0;
+//			for(i=0; i<ccEmail.length; i++) {
+//				
+//				message.setTo(ccEmail[i]);
+//				message.setSubject(subject);
+//				message.setText(emailBody);
+//				mailSender.send(message);
+//			}
+//			
+//			
+//			return "email sent successfully";
+//			
+//		} catch (Exception e) {
+//			throw new RuntimeException("Could not send email : "+e.getMessage());
+//		}
+//		
+//	}
 }

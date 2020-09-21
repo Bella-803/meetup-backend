@@ -40,6 +40,7 @@ public class Category {
 	private List<MeetupGroup> meetupGroups;
 	
 
+	@JsonIgnore
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, 
                           CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinColumn(name = "user_id")

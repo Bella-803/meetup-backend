@@ -64,6 +64,7 @@ public class MeetupGroup {
 	            inverseJoinColumns = @JoinColumn(name = "member_id"))
 	private List<UserAccount> members;
 	
+	@JsonIgnore
 	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name = "sector_id")
 	private Sector sector;
@@ -103,10 +104,8 @@ public class MeetupGroup {
 	}
 
 	public String getLocation() {
-		String provinceName = getSector().getDistrict().getProvince().getName();
-		String districtName = getSector().getDistrict().getName();
-		String sectorName = getSector().getName();
-		return provinceName + " - "+districtName + " - "+ sectorName;
+
+		return location;
 	}
 
 	public void setLocation(String location) {

@@ -63,6 +63,7 @@ public class GroupService {
 		meetupGroup.setGroupAdmin(groupAdmin);
 		meetupGroup.setGroupAdminName(groupAdmin.getFullname());
 		meetupGroup.setSector(sector);
+		meetupGroup.setLocation(sector.getName());
 		
 		//add group admin role to the user after checking if he is admin
 		if(!groupAdmin.geteRoles().equals(ERoles.ADMIN))
@@ -73,19 +74,7 @@ public class GroupService {
 		//userService.updateUser(groupAdmin);
         userService.updateUser(groupAdmin); 
 		
-        //Send an email to all user about the creation of a group
-//		List<UserAccount> allUsers = userService.findAllUser();
-//		
-//		if(allUsers != null) {
-//			for(UserAccount user : allUsers) {
-//				String message = "Hello "+user.getFullname()+",\n\nThis is to let you know that "
-//						        + "a new meetup group : "+group.getGroupName()+" has been created in Category "+catName+"\n\n";
-//				String to = user.getEmail();
-//				String subject = "New Meetup Group created";
-//				emailService.sendEmail(message, subject, to);
-//			}
-//			
-//		}
+   
 		return group;
 		}
 		
@@ -99,12 +88,16 @@ public class GroupService {
 		return groups.get();
 	}
 	
-	public MeetupGroup findGroupByName(String groupName) {
+	public MeetupGroup findGroupById(int id, String username) {
+		Optional<MeetupGroup> groups = groupDao.findById(id);
 		
-		MeetupGroup group = groupDao.findByGroupName(groupName);
-		  if(group == null) {
-		    	throw new MeetupGroupNotFoundException("Group: '"+groupName+"' does not exist");
-		    }
+		if(!groups.isPresent()) {
+			throw new MeetupGroupNotFoundException("Group of ID : "+id+" does not exist");
+		}
+		MeetupGroup group = groups.get();
+		if(!group.getGroupAdmin().getUsername().equals(username)) {
+			throw new MeetupGroupNotFoundException("You do not have a group named : "+group.getGroupName());
+		}
 		return group;
 	}
 	
@@ -115,10 +108,14 @@ public class GroupService {
 	public void deleteGroup(int groupId, String username) {
 		UserAccount groupAdmin = userDao.findByUsername(username);
 	   MeetupGroup group = findGroupById(groupId);
-	   if(!(group.getGroupAdmin().getUsername().equals(groupAdmin.getUsername())) || !(groupAdmin.geteRoles().equals(ERoles.ADMIN))) {
+	   
+	   if(group.getGroupAdmin().getUsername().equals(groupAdmin.getUsername()) || (groupAdmin.geteRoles().equals(ERoles.ADMIN))) {
+		   groupDao.delete(group);
+	   }
+	   else {
 		   throw new RuntimeException("You are not allowed to delete this group");
 	   }
-	   groupDao.delete(group);
+	   
 	}
 
 	public List<MeetupGroup> findAllGroup(int categoryId) {
@@ -140,7 +137,10 @@ public class GroupService {
 					}
 					group.setCategory(existingGroup.getCategory()); 
 					group.setGroupAdmin(existingGroup.getGroupAdmin());
+					group.setSector(existingGroup.getSector());
+					group.setLocation(existingGroup.getLocation());
 					group.setGroupAdminName(existingGroup.getGroupAdmin().getFullname());
+			        group.setMembers(existingGroup.getMembers());
 					groupDao.save(group);
 					return group;
 				}else {
@@ -181,7 +181,8 @@ public class GroupService {
 			return "Successfully joined the group";
 			
 		} catch (Exception e) {
-           throw new RuntimeException("You can not join the group! Try again later");
+			e.printStackTrace();
+           throw new RuntimeException("You can not join the group! Try again later :"+e.getMessage());
 		}
 	}
 	
@@ -228,6 +229,28 @@ public class GroupService {
 		List<MeetupGroup> allGroups = findAllGroup();
 		return allGroups.size();
 		
+	}
+
+
+	public String removerMember(int groupId, int userId, String username) {
+		
+		try {
+			UserAccount groupAdmin = userDao.findByUsername(username);
+			MeetupGroup group = findGroupById(groupId);
+			UserAccount user = userService.findUserById(userId);
+			
+			if(group.getGroupAdmin().getUsername().equals(groupAdmin.getUsername())) {
+			  group.getMembers().remove(user);	
+			  updateGroup(group, group.getCategory().getId(), username);
+			}
+			else {
+				throw new RuntimeException("You are not allowed to remove member.You are not the group admin");
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to remove member.Try again later");
+		}
+		return "Member successfully deleted";
 	}
 	
 }

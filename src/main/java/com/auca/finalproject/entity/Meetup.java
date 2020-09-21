@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -33,6 +34,7 @@ public class Meetup {
 	private String description;
 	private String location;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+	@Future(message = "Invalid Date. Date must be in the future")
 	private Date dateAndTime;
 	private String photoPath;
 	private int numberOfAttendees = 0;
